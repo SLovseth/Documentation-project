@@ -1,0 +1,1410 @@
+{
+  "compatibilityLevel": 1550,
+  "model": {
+    "annotations": [
+      {
+        "name": "__PBI_TimeIntelligenceEnabled",
+        "value": "0"
+      },
+      {
+        "name": "PBIDesktopVersion",
+        "value": "2.126.1261.0 (24.02)"
+      },
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"All dataflows\",\"All parameters\",\"All Query Names\",\"All Merging\",\"Dataflows data\",\"SQL Server\",\"Dataflows\",\"Workspaces\",\"Server / database overview\",\"MyFiles\",\"Script\",\"Sample File\",\"Parameter1\",\"Transform Sample File\",\"Transform File\",\"Model\",\"POPle dataset\"]"
+      },
+      {
+        "name": "PBI_ProTooling",
+        "value": "[\"DevMode\"]"
+      }
+    ],
+    "culture": "nb-NO",
+    "cultures": [
+      {
+        "name": "nb-NO",
+        "linguisticMetadata": {
+          "content": {
+            "DynamicImprovement": "HighConfidence",
+            "Language": "en-US",
+            "Version": "1.0.0"
+          },
+          "contentType": "json"
+        }
+      }
+    ],
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "expressions": [
+      {
+        "name": "All dataflows",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = MyFiles,",
+          "    #\"Split Column by Delimiter\" = Table.SplitColumn(Source, \"Source.Name\", Splitter.SplitTextByDelimiter(\"&script\", QuoteStyle.Csv), {\"WorkspaceID\", \"DataflowID\", \"WorkspaceName\", \"DataflowName\"}),",
+          "    #\"Removed Columns\" = Table.RemoveColumns(#\"Split Column by Delimiter\",{\"Dataflows details\"})",
+          "in",
+          "    #\"Removed Columns\""
+        ],
+        "kind": "m",
+        "lineageTag": "78d67340-7bb1-4728-8227-12f121e9a064"
+      },
+      {
+        "name": "All parameters",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = #\"All dataflows\"",
+          "",
+          " ,#\"Added Parameter Flag\" = Table.AddColumn(Source, \"Parameter Flag\", each if Text.Contains([Value], \"IsParameterQuery = true\") then true else false, type logical),",
+          "    #\"Filtered Rows\" = Table.SelectRows(#\"Added Parameter Flag\", each ([Parameter Flag] = true)),",
+          "    #\"Added Query Name\" = Table.AddColumn(#\"Filtered Rows\", \"QueryName\", each if Text.Contains([Value],\"shared #\\\") then",
+          "",
+          " Text.BetweenDelimiters([Value],\"shared #\\\"\"\",\"\\\"\" =\")",
+          "",
+          "else if (not Text.Contains([Value],\"shared #\\\") ) then",
+          "",
+          "Text.BetweenDelimiters([Value],\"shared \",\" =\")",
+          "else null, type text),",
+          "   #\"Added Parameter Current Value\" = Table.AddColumn(#\"Added Query Name\", \"Parameter Current Value\", each if Text.Contains([Value],\"IsParameterQuery\") ",
+          "then",
+          "Text.BetweenDelimiters([Value],\"= \\\"\"\",\"\\\"\"\") else null, type text),",
+          "    #\"Removed Columns\" = Table.RemoveColumns(#\"Added Parameter Current Value\",{\"Value\", \"Parameter Flag\"})",
+          "in",
+          "    #\"Removed Columns\""
+        ],
+        "kind": "m",
+        "lineageTag": "d5ba9e52-94c1-4e2f-8417-b2d28a55dea7"
+      },
+      {
+        "name": "All Query Names",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = #\"All dataflows\"",
+          "",
+          " ,#\"Added Query Name\" = Table.AddColumn(Source, \"QueryName\", each if Text.Contains([Value],\"shared #\\\") then",
+          "",
+          " Text.BetweenDelimiters([Value],\"shared #\\\"\"\",\"\\\"\" =\")",
+          "",
+          "else if (not Text.Contains([Value],\"shared #\\\") ) then",
+          "",
+          "Text.BetweenDelimiters([Value],\"shared \",\" =\")",
+          "else null, type text),",
+          "    #\"Reordered Columns\" = Table.ReorderColumns(#\"Added Query Name\",{\"QueryName\", \"WorkspaceID\", \"DataflowID\", \"WorkspaceName\", \"DataflowName\", \"Value\"}),",
+          "    #\"Removed Columns\" = Table.RemoveColumns(#\"Reordered Columns\",{\"Value\"}),",
+          "    #\"Reordered Columns1\" = Table.ReorderColumns(#\"Removed Columns\",{\"QueryName\", \"WorkspaceName\", \"DataflowName\", \"WorkspaceID\", \"DataflowID\"}),",
+          "    #\"Removed Duplicates\" = Table.Distinct(#\"Reordered Columns1\")",
+          "in",
+          "    #\"Removed Duplicates\""
+        ],
+        "kind": "m",
+        "lineageTag": "b25dbca9-fbba-4812-b8b3-487420d7bf8a"
+      },
+      {
+        "name": "All Merging",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "expression": [
+          "let",
+          "Source = #\"All dataflows\"",
+          "   ,",
+          "   #\"Removed Other Columns\" = Table.SelectColumns(Source,{\"Value\", \"WorkspaceID\",  \"DataflowID\", \"DataflowName\"}),",
+          "    #\"Added Query Name\" = Table.AddColumn(#\"Removed Other Columns\", \"Query Name\", each if Text.Contains([Value],\"shared #\\\") then",
+          "",
+          " Text.BetweenDelimiters([Value],\"shared #\\\"\"\",\"\\\"\" =\")",
+          "",
+          "else if (not Text.Contains([Value],\"shared #\\\") ) then",
+          "",
+          "Text.BetweenDelimiters([Value],\"shared \",\" =\")",
+          "else null, type text)",
+          ",",
+          "    #\"Added Merged Flag\" = Table.AddColumn(#\"Added Query Name\", \"Merged Flag\", each Text.Contains([Value], \"Table.NestedJoin\"), type logical),",
+          "    #\"Filtered = True\" = Table.SelectRows(#\"Added Merged Flag\", each ([Merged Flag] = true)),",
+          "    #\"Duplicated Column\" = Table.DuplicateColumn(#\"Filtered = True\", \"Value\", \"Value - Copy\"),",
+          "    #\"Split Column by Delimiter1\" = Table.SplitColumn(#\"Duplicated Column\", \"Value - Copy\", Splitter.SplitTextByDelimiter(\"Table.ExpandTableColumn(\", QuoteStyle.Csv), {\"Column1 - Copy.1\", \"Column1 - Copy.2\", \"Column1 - Copy.3\", \"Column1 - Copy.4\", \"Column1 - Copy.5\", \"Column1 - Copy.6\", \"Column1 - Copy.7\", \"Column1 - Copy.8\", \"Column1 - Copy.9\"}),",
+          "    #\"Unpivoted Other Columns2\" = Table.UnpivotOtherColumns(#\"Split Column by Delimiter1\", {\"Value\", \"WorkspaceID\", \"DataflowID\", \"DataflowName\", \"Merged Flag\", \"Query Name\"}, \"Attribute\", \"Value2\"),",
+          "    #\"Added Merged\" = Table.AddColumn(#\"Unpivoted Other Columns2\", \"Merged with \", each Text.BetweenDelimiters([Value2], \"\\, \\\", \"\\, {\"),type text),",
+          "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Added Merged\",{\"Merged Flag\", \"Attribute\", \"Value\", \"Value2\"})",
+          "in",
+          "    #\"Removed Columns1\""
+        ],
+        "kind": "m",
+        "lineageTag": "ac3a0fc8-635e-48ea-8e46-010da86860d2"
+      },
+      {
+        "name": "Sample File",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Binary"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = Folder.Files(\"C:\\Users\\sueli\\Documents\\My files\"),",
+          "    Navigation1 = Source{0}[Content]",
+          "in",
+          "    Navigation1"
+        ],
+        "kind": "m",
+        "lineageTag": "58a059e5-1300-4361-8d23-88d3bb0a17c2",
+        "queryGroup": "Transform File from My files\\Helper Queries"
+      },
+      {
+        "name": "Parameter1",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Binary"
+          }
+        ],
+        "expression": "#\"Sample File\" meta [IsParameterQuery=true, BinaryIdentifier=#\"Sample File\", Type=\"Binary\", IsParameterQueryRequired=true]",
+        "kind": "m",
+        "lineageTag": "cc9709de-8483-462f-b2ac-fe09ce674377",
+        "queryGroup": "Transform File from My files\\Helper Queries"
+      },
+      {
+        "name": "Transform Sample File",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = Csv.Document(Parameter1,[Delimiter=\";\", Columns=7, Encoding=65001, QuoteStyle=QuoteStyle.None])",
+          "in",
+          "    Source"
+        ],
+        "kind": "m",
+        "lineageTag": "5e203dc0-1370-45e0-94e1-20703823365d",
+        "queryGroup": "Transform File from My files"
+      },
+      {
+        "name": "Transform File",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Function"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = (Parameter1 as binary) => let",
+          "    Source = Csv.Document(Parameter1,[Delimiter=\";\", Columns=7, Encoding=65001, QuoteStyle=QuoteStyle.None])",
+          "in",
+          "    Source",
+          "in",
+          "    Source"
+        ],
+        "kind": "m",
+        "lineageTag": "95f40816-7ee4-45c2-90ac-dbe71b9a30d4",
+        "mAttributes": "[ FunctionQueryBinding = \"{\"\"exemplarFormulaName\"\":\"\"Transform Sample File\"\"}\" ]",
+        "queryGroup": "Transform File from My files\\Helper Queries"
+      },
+      {
+        "name": "MyFiles",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = Folder.Files(\"C:\\Users\\sueli\\Documents\\My files\"),",
+          "    #\"Filtered Hidden Files1\" = Table.SelectRows(Source, each [Attributes]?[Hidden]? <> true),",
+          "    #\"Invoke Custom Function1\" = Table.AddColumn(#\"Filtered Hidden Files1\", \"Transform File\", each #\"Transform File\"([Content])),",
+          "    #\"Renamed Columns1\" = Table.RenameColumns(#\"Invoke Custom Function1\", {\"Name\", \"Source.Name\"}),",
+          "    #\"Removed Other Columns1\" = Table.SelectColumns(#\"Renamed Columns1\", {\"Source.Name\", \"Transform File\"}),",
+          "    #\"Expanded Table Column1\" = Table.ExpandTableColumn(#\"Removed Other Columns1\", \"Transform File\", Table.ColumnNames(#\"Transform File\"(#\"Sample File\"))),",
+          "    #\"Renamed Columns2\" = Table.RenameColumns(#\"Expanded Table Column1\",{{\"Column1\", \"Dataflows details\"}}),",
+          "    #\"Unpivoted Other Columns1\" = Table.UnpivotOtherColumns(#\"Renamed Columns2\", {\"Source.Name\", \"Dataflows details\"}, \"Attribute\", \"Value\"),",
+          "    #\"Removed Columns\" = Table.RemoveColumns(#\"Unpivoted Other Columns1\",{\"Attribute\"})",
+          "in",
+          "    #\"Removed Columns\""
+        ],
+        "kind": "m",
+        "lineageTag": "cab2a637-a8c6-4bd0-90a5-60698d11c3a2",
+        "queryGroup": "From my files"
+      },
+      {
+        "name": "Script",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = \"Script in the comments\"",
+          "in",
+          "    Source",
+          "",
+          "",
+          "/*",
+          "",
+          "",
+          "",
+          "#Connect-PowerBIServiceAccount",
+          "$workspaces = Get-PowerBIWorkspace",
+          "",
+          " ",
+          "foreach ($workspace in $workspaces) ",
+          "{ ",
+          "\t$wspid = $workspace.id",
+          "\t$ListDataflows = Invoke-PowerBIRestMethod -Method GET -Url https://api.powerbi.com/v1.0/myorg/groups/$wspid/dataflows | ConvertFrom-Json",
+          "",
+          " ",
+          " ",
+          "\tforeach ($dataflowitem in $ListDataflows.value) ",
+          "\t{",
+          "   $filnavn = [string]::Format(\"C:\\Users\\sueli\\Documents\\My files\\{0}&script{1}&script{2}&script{3}&script.csv\",$workspace.id, $dataflowitem.ObjectId, $workspace.name,$dataflowitem.Name)\t\t",
+          "\t$url =  ( [string]::Format(\"{0}/dataflows/{1}\" , $workspace.id, $dataflowitem.ObjectId ))\t",
+          "\t",
+          "\t$json =  foreach ($urlitem in $url) ",
+          "\t{\t\t\t",
+          "\t\tInvoke-PowerBIRestMethod -ContentType \"application/json; charset=ISO-8859-1\" -OutFile $filnavn -Method GET -Url https://api.powerbi.com/v1.0/myorg/groups/$url | ConvertFrom-Json",
+          "\t\t",
+          "\t}}}",
+          "",
+          "",
+          "",
+          "*/"
+        ],
+        "kind": "m",
+        "lineageTag": "7249f357-c521-440a-9122-3e5215f062b8",
+        "queryGroup": "From my files"
+      },
+      {
+        "name": "POPle dataset",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "expression": "AnalysisServices.Database(\"powerbi://api.powerbi.com/v1.0/myorg/POP\", \"POPle dataset\", [Query=\"select * from $system.discover_m_expressions\", Implementation=\"2.0\"])",
+        "kind": "m",
+        "lineageTag": "f54004e4-8ef7-48f3-ba7c-08d53928ce07"
+      }
+    ],
+    "queryGroups": [
+      {
+        "annotations": [
+          {
+            "name": "PBI_QueryGroupOrder",
+            "value": "0"
+          }
+        ],
+        "folder": "Transform File from My files"
+      },
+      {
+        "annotations": [
+          {
+            "name": "PBI_QueryGroupOrder",
+            "value": "0"
+          }
+        ],
+        "folder": "Transform File from My files\\Helper Queries"
+      },
+      {
+        "annotations": [
+          {
+            "name": "PBI_QueryGroupOrder",
+            "value": "2"
+          }
+        ],
+        "folder": "From my files"
+      }
+    ],
+    "relationships": [
+      {
+        "name": "a9d7131a-d96f-4577-94b2-932cc20ef45b",
+        "fromColumn": "WorkspaceName",
+        "fromTable": "Dataflows data",
+        "toColumn": "WorkspaceName",
+        "toTable": "Workspaces"
+      }
+    ],
+    "sourceQueryCulture": "nb-NO",
+    "tables": [
+      {
+        "name": "Dataflows data",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "WorkspaceID",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "2c69b045-740c-4737-9e0e-f3788e95c8ac",
+            "sourceColumn": "WorkspaceID",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "DataflowID",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "8b9a0234-bc18-4701-ad74-a41ba501a545",
+            "sourceColumn": "DataflowID",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Referenced by",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "506ec9da-9d8e-47cf-88b8-d45316755adf",
+            "sourceColumn": "Referenced by",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Used in merging Flag",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "boolean",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "lineageTag": "c2581dbe-d71d-4471-aa14-a2b75d714af1",
+            "sourceColumn": "Used in merging Flag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Parameter Flag",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "boolean",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "lineageTag": "8d367e3f-896b-4481-a268-6d32d0506076",
+            "sourceColumn": "Parameter Flag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Function Flag",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "boolean",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "lineageTag": "66535f68-5151-4eeb-bade-548ae6579b21",
+            "sourceColumn": "Function Flag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Query Reference",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "9e8958f0-bc46-4c02-ac8b-9cc0c46744e5",
+            "sourceColumn": "Query Reference",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "SQL Server",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "6be5d188-e67c-4da7-97be-37d9e0a6bb54",
+            "sourceColumn": "SQL Server",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Database",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "de374f59-d182-4349-8593-8d5227ab3f79",
+            "sourceColumn": "Database",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Schema",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "3731fe86-8345-4b7a-9355-9e68ee49e451",
+            "sourceColumn": "Schema",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Item",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "e061b721-a2f9-452f-a1ad-ea15bdbfc13a",
+            "sourceColumn": "Item",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Filter",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "9c937f6e-1ad4-4e46-b118-9592a3f1a9b7",
+            "sourceColumn": "Filter",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "WorkspaceName",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "61d6348b-dd87-4b09-b34b-faaf0f7c2c8f",
+            "sourceColumn": "WorkspaceName",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "DataflowName",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "095cfc6d-ecf0-4f0b-819b-404830e7a0d3",
+            "sourceColumn": "DataflowName",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "QueryName",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "43582026-2033-42d3-86d4-3b6f989ecbe9",
+            "sourceColumn": "QueryName",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "3964b444-3158-40e3-b9b2-3e4ea002f131",
+        "partitions": [
+          {
+            "name": "Dataflows data",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = #\"All dataflows\",",
+                "    #\"Added Query Name\" = Table.AddColumn(Source, \"QueryName\", each if Text.Contains([Value],\"shared #\\\") then",
+                "",
+                " Text.BetweenDelimiters([Value],\"shared #\\\"\"\",\"\\\"\" =\")",
+                "",
+                "else if (not Text.Contains([Value],\"shared #\\\") ) then",
+                "",
+                "Text.BetweenDelimiters([Value],\"shared \",\" =\")",
+                "else null, type text)",
+                ",",
+                "",
+                "    #\"Filtered Query <> null\" = Table.SelectRows(#\"Added Query Name\", each ([QueryName] <> \"\")),",
+                "    #\"Merged to get \"\"Merged queries\"\"\" = Table.NestedJoin(#\"Filtered Query <> null\", {\"QueryName\"}, #\"All Merging\", {\"Merged with \"}, \"All Merging\", JoinKind.LeftOuter),",
+                "    #\"Expanded All Merging\" = Table.ExpandTableColumn(#\"Merged to get \"\"Merged queries\"\"\", \"All Merging\", {\"Query Name\", \"Merged with \"}, {\"Query Name.1\", \"Merged with \"}),",
+                "    #\"Added Used in merging flag\" = Table.AddColumn(#\"Expanded All Merging\", \"Used in merging Flag\", each if [#\"Merged with \"]<> null then true else false, type logical),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Added Used in merging flag\",{{\"Query Name.1\", \"Referenced by\"}}),",
+                "    #\"Added Parameter Flag\" = Table.AddColumn(#\"Renamed Columns\", \"Parameter Flag\", each if Text.Contains([Value], \"IsParameterQuery = true\") then true else false, type logical),",
+                "    #\"Added Function Flag\" = Table.AddColumn(#\"Added Parameter Flag\", \"Function Flag\", each if Text.Contains([Value], \") =>\") then true else false, type logical),",
+                "    #\"Removed Columns4\" = Table.RemoveColumns(#\"Added Function Flag\",{\"Merged with \"}),",
+                "    #\"Added Source Text\" = Table.AddColumn(#\"Removed Columns4\", \"Source Text\", each if (not Text.Contains([Value], \"Sql\")) then   Text.BetweenDelimiters([Value], \"Source = \", \",\") else null,type text),",
+                "    #\"Merged Queries2\" = Table.FuzzyNestedJoin(#\"Added Source Text\", {\"Source Text\"}, #\"All Query Names\", {\"QueryName\"}, \"All Query Names\", JoinKind.LeftOuter, [IgnoreCase=true, IgnoreSpace=true]),",
+                "    #\"Expanded All Query Names\" = Table.ExpandTableColumn(#\"Merged Queries2\", \"All Query Names\", {\"QueryName\"}, {\"Query Reference\"}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Expanded All Query Names\",{\"Source Text\"}),",
+                "    #\"Added SQL Text\" = Table.AddColumn(#\"Removed Columns\", \"SQL Text\", each Text.BetweenDelimiters([Value], \"Source = Sql.Database(\", \",\"), type text),",
+                "    #\"Merged Queries1\" = Table.FuzzyNestedJoin(#\"Added SQL Text\", {\"SQL Text\"}, #\"All parameters\", {\"QueryName\"}, \"Parameters\", JoinKind.LeftOuter, [IgnoreCase=true, IgnoreSpace=true]),",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Merged Queries1\", each ([QueryName] <> \"\")),",
+                "    #\"Expanded Parameters\" = Table.ExpandTableColumn(#\"Filtered Rows\", \"Parameters\", {\"Parameter Current Value\"}, {\"Parameter Current Value\"}),",
+                "    #\"Added Server\" = Table.AddColumn(#\"Expanded Parameters\", \"SQL Server\", each if [Parameter Current Value] <> null then [Parameter Current Value] ",
+                "",
+                "else Text.BetweenDelimiters([SQL Text], \"\"\"\",\"\\\"),type text),",
+                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Added Server\",{\"SQL Text\", \"Parameter Current Value\"}),",
+                "    #\"Added Database Text\" = Table.AddColumn(#\"Removed Columns1\", \"Database Text\", each if Text.Contains([Value],\"select\") then Text.BetweenDelimiters([Value], \"\\\"\", \", \"\\\"\",\")",
+                "",
+                "else Text.BetweenDelimiters(Text.BetweenDelimiters([Value], \"Source = Sql.Database(\", \")\"), \",\",\",\")),",
+                "    #\"Merged Queries3\" = Table.FuzzyNestedJoin(#\"Added Database Text\", {\"Database Text\"}, #\"All parameters\", {\"QueryName\"}, \"All parameters\", JoinKind.LeftOuter, [IgnoreCase=true, IgnoreSpace=true]),",
+                "    #\"Expanded All parameters\" = Table.ExpandTableColumn(#\"Merged Queries3\", \"All parameters\", {\"Parameter Current Value\"}, {\"Database\"}),",
+                "    #\"Removed Columns2\" = Table.RemoveColumns(#\"Expanded All parameters\",{\"Database Text\"}),",
+                "    #\"Added Schema\" = Table.AddColumn(#\"Removed Columns2\", \"Schema\", each Text.BetweenDelimiters([Value], \"Source{[Schema = \\\"\"\", \"\\\"\"\"), type text),",
+                "    #\"Added Item\" = Table.AddColumn(#\"Added Schema\", \"Item\", each Text.BetweenDelimiters([Value], \"Item = \\\"\"\", \"\\\"\"]}[Data]\"), type text),",
+                "    #\"Added Filter\" = Table.AddColumn(#\"Added Item\", \"Filter\", each if Text.Contains([Value],\"= Table.SelectRows\") then",
+                "Text.BetweenDelimiters([Value],\"each\",\")\")",
+                "",
+                "else ",
+                "null, type text),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Added Filter\",\"\\\"\"\",\"\",Replacer.ReplaceText,{\"Filter\"}),",
+                "    #\"Removed Columns3\" = Table.RemoveColumns(#\"Replaced Value\",{\"Value\"}),",
+                "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Columns3\"),",
+                "    #\"Reordered Columns\" = Table.ReorderColumns(#\"Removed Duplicates\",{\"WorkspaceID\", \"DataflowID\", \"DataflowName\", \"QueryName\", \"Referenced by\", \"Used in merging Flag\", \"Parameter Flag\", \"Function Flag\", \"Query Reference\", \"SQL Server\", \"Database\", \"Schema\", \"Item\", \"Filter\"})",
+                "in",
+                "    #\"Reordered Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "SQL Server",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "SQL Server",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "27569d70-d5d7-4aed-8db0-ace199d03397",
+            "sourceColumn": "SQL Server",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "8e154adb-9d06-4639-bdac-3e6e8fccd1c9",
+        "partitions": [
+          {
+            "name": "SQL Server",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = #\"Dataflows data\",",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(Source,{\"SQL Server\"}),",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Removed Other Columns\", each ([SQL Server] <> \"\")),",
+                "    #\"Lowercased Text\" = Table.TransformColumns(#\"Filtered Rows\",{{\"SQL Server\", Text.Lower, type text}}),",
+                "    #\"Removed Duplicates\" = Table.Distinct(#\"Lowercased Text\")",
+                "in",
+                "    #\"Removed Duplicates\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Dataflows",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "DataflowID",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b9ac48ac-f5e4-426d-97e4-5f18472e82af",
+            "sourceColumn": "DataflowID",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "WorkspaceID",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "261b341a-bad7-43c7-8776-c5937d219dfc",
+            "sourceColumn": "WorkspaceID",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "DataflowName",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "94aa4875-2664-4161-a525-31040c748ab3",
+            "sourceColumn": "DataflowName",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "07a15b78-74f4-4545-9dc8-8314035f175b",
+        "partitions": [
+          {
+            "name": "Dataflows",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = #\"Dataflows data\",",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(Source,{\"WorkspaceID\", \"DataflowID\", \"DataflowName\"}),",
+                "    #\"Reordered Columns\" = Table.ReorderColumns(#\"Removed Other Columns\",{\"DataflowID\", \"DataflowName\", \"WorkspaceID\"}),",
+                "    #\"Removed Duplicates\" = Table.Distinct(#\"Reordered Columns\")",
+                "in",
+                "    #\"Removed Duplicates\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Workspaces",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "WorkspaceID",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "3cbc747f-d17f-451c-b7b2-e9e74505c2e9",
+            "sourceColumn": "WorkspaceID",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "WorkspaceName",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b408525d-938b-4670-b6dc-b4ba35d153c6",
+            "sourceColumn": "WorkspaceName",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "7011d31b-97f5-44e8-9d17-e3ee7483dd5e",
+        "partitions": [
+          {
+            "name": "Workspaces",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = #\"Dataflows data\",",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(Source,{\"WorkspaceID\", \"WorkspaceName\"}),",
+                "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Other Columns\")",
+                "in",
+                "    #\"Removed Duplicates\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Server / database overview",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "SQL Server",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "a0a99620-9514-4f13-8322-f35c46e8a6f3",
+            "sourceColumn": "SQL Server",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Database",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "3d2522f1-145d-4593-8c7e-8f1ca376404c",
+            "sourceColumn": "Database",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Schema",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "69ca389a-c4e3-4056-9dfa-7cb922924155",
+            "sourceColumn": "Schema",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Item",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "9465d158-bf6c-4605-b837-da5596c3cdc8",
+            "sourceColumn": "Item",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "DataflowName",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "d07bb09a-3452-430c-a944-67529731c7fd",
+            "sourceColumn": "DataflowName",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "f7a3429e-3647-427a-95b7-cf2e78d7bde6",
+        "partitions": [
+          {
+            "name": "Server / database overview",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = #\"All dataflows\",",
+                "    #\"Added Query Name\" = Table.AddColumn(Source, \"QueryName\", each if Text.Contains([Value],\"shared #\\\") then",
+                "",
+                " Text.BetweenDelimiters([Value],\"shared #\\\"\"\",\"\\\"\" =\")",
+                "",
+                "else if (not Text.Contains([Value],\"shared #\\\") ) then",
+                "",
+                "Text.BetweenDelimiters([Value],\"shared \",\" =\")",
+                "else null, type text)",
+                ",",
+                "",
+                "    #\"Filtered Query <> null\" = Table.SelectRows(#\"Added Query Name\", each ([QueryName] <> \"\")),",
+                "    #\"Merged to get \"\"Merged queries\"\"\" = Table.NestedJoin(#\"Filtered Query <> null\", {\"QueryName\"}, #\"All Merging\", {\"Merged with \"}, \"All Merging\", JoinKind.LeftOuter),",
+                "    #\"Expanded All Merging\" = Table.ExpandTableColumn(#\"Merged to get \"\"Merged queries\"\"\", \"All Merging\", {\"QueryName\", \"Merged with \"}, {\"Query Name.1\", \"Merged with \"}),",
+                "    #\"Added Used in merging flag\" = Table.AddColumn(#\"Expanded All Merging\", \"Used in merging flag\", each if [#\"Merged with \"]<> null then true else false, type logical),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Added Used in merging flag\",{{\"Query Name.1\", \"Referenced by\"}}),",
+                "    #\"Added Parameter Flag\" = Table.AddColumn(#\"Renamed Columns\", \"Parameter Flag\", each if Text.Contains([Value], \"IsParameterQuery = true\") then true else false, type logical),",
+                "    #\"Added Function Flag\" = Table.AddColumn(#\"Added Parameter Flag\", \"Function Flag\", each if Text.Contains([Value], \") =>\") then true else false, type logical),",
+                "    #\"Removed Columns4\" = Table.RemoveColumns(#\"Added Function Flag\",{\"Merged with \"}),",
+                "    #\"Added Source Text\" = Table.AddColumn(#\"Removed Columns4\", \"Source Text\", each if (not Text.Contains([Value], \"Sql\")) then   Text.BetweenDelimiters([Value], \"Source = \", \",\") else null,type text),",
+                "    #\"Merged Queries2\" = Table.FuzzyNestedJoin(#\"Added Source Text\", {\"Source Text\"}, #\"All Query Names\", {\"QueryName\"}, \"All Query Names\", JoinKind.LeftOuter, [IgnoreCase=true, IgnoreSpace=true]),",
+                "    #\"Expanded All Query Names\" = Table.ExpandTableColumn(#\"Merged Queries2\", \"All Query Names\", {\"queryName\"}, {\"Query Reference\"}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Expanded All Query Names\",{\"Source Text\"}),",
+                "    #\"Added SQL Text\" = Table.AddColumn(#\"Removed Columns\", \"SQL Text\", each Text.BetweenDelimiters([Value], \"Source = Sql.Database(\", \",\"), type text),",
+                "    #\"Merged Queries1\" = Table.FuzzyNestedJoin(#\"Added SQL Text\", {\"SQL Text\"}, #\"All parameters\", {\"QueryName\"}, \"Parameters\", JoinKind.LeftOuter, [IgnoreCase=true, IgnoreSpace=true]),",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Merged Queries1\", each ([QueryName] <> \"\")),",
+                "    #\"Expanded Parameters\" = Table.ExpandTableColumn(#\"Filtered Rows\", \"Parameters\", {\"Parameter Current Value\"}, {\"Parameter Current Value\"}),",
+                "    #\"Added Server\" = Table.AddColumn(#\"Expanded Parameters\", \"SQL Server\", each if [Parameter Current Value] <> null then [Parameter Current Value] ",
+                "",
+                "else Text.BetweenDelimiters([SQL Text], \"\"\"\",\"\\\"),type text),",
+                "    #\"Removed Columns1\" = Table.RemoveColumns(#\"Added Server\",{\"SQL Text\", \"Parameter Current Value\"}),",
+                "    #\"Added Database Text\" = Table.AddColumn(#\"Removed Columns1\", \"Database\", each if Text.Contains([Value],\"select\") then Text.BetweenDelimiters([Value], \"\\\"\", \", \"\\\"\",\")",
+                "",
+                "else Text.BetweenDelimiters(Text.BetweenDelimiters([Value], \"Source = Sql.Database(\", \")\"), \",\",\",\")),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Added Database Text\",\"\\\"\"\",\"\",Replacer.ReplaceText,{\"Database\"}),",
+                "    #\"Added Schema\" = Table.AddColumn(#\"Replaced Value\", \"Schema\", each Text.BetweenDelimiters([Value], \"Source{[Schema = \\\"\"\", \"\\\"\"\"), type text),",
+                "    #\"Added Item\" = Table.AddColumn(#\"Added Schema\", \"Item\", each Text.BetweenDelimiters([Value], \"Item = \\\"\"\", \"\\\"\"]}[Data]\"), type text),",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Added Item\",{\"DataflowName\", \"SQL Server\", \"Database\", \"Schema\", \"Item\"}),",
+                "    #\"Filtered Rows1\" = Table.SelectRows(#\"Removed Other Columns\", each ([SQL Server] <> \"\")),",
+                "    #\"Removed Duplicates\" = Table.Distinct(#\"Filtered Rows1\")",
+                "in",
+                "    #\"Removed Duplicates\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Model",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "PO ansatt.Aktiv",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "a238f842-c55f-40a3-a96b-02dcc7a659e9",
+            "sourceColumn": "PO ansatt.Aktiv",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "PO ansatt.Ansatt",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "6e006338-b896-4178-82f7-7029dab9fca1",
+            "sourceColumn": "PO ansatt.Ansatt",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "PO ansatt.Ansatt aktiv",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "3e5a6130-103f-489c-821b-8c76f02283cc",
+            "sourceColumn": "PO ansatt.Ansatt aktiv",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "PO ansatt.Ansattnavn",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "4c464059-677c-4d12-b9f6-7e7deeb5db21",
+            "sourceColumn": "PO ansatt.Ansattnavn",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "PO ansatt.Ansattnummer",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "3b83b422-dc6f-4485-bafd-5790f12a6600",
+            "sourceColumn": "PO ansatt.Ansattnummer",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "PO ansatt.Avdeling",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b107c55b-f6c2-4f12-8d74-cfa0f60182dc",
+            "sourceColumn": "PO ansatt.Avdeling",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "PO ansatt.Prosent Framo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b3460c13-1de8-409a-8658-58303511ad35",
+            "sourceColumn": "PO ansatt.Prosent Framo",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Timer uten fravær",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataType": "double",
+            "lineageTag": "e54e74cf-d19f-4b7f-900d-87f39dd72f51",
+            "sourceColumn": "Timer uten fravær",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Fakturerbare timer",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataType": "double",
+            "lineageTag": "260d6b05-8c1d-4bdc-9de7-028e68d69127",
+            "sourceColumn": "Fakturerbare timer",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Faktureringsgrad",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataType": "double",
+            "lineageTag": "10cfa006-aa4d-4d21-b23d-b5ae3f98857c",
+            "sourceColumn": "Faktureringsgrad",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Ikke fakturerbare timer",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataType": "double",
+            "lineageTag": "3c7b027b-2ee6-49b9-8cac-09285fa59f18",
+            "sourceColumn": "Ikke fakturerbare timer",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Timer ført",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataType": "double",
+            "lineageTag": "cedd4f77-dcff-470c-bf83-249da29f1971",
+            "sourceColumn": "Timer ført",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Siste timeføring flag",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "56507731-759f-4c43-b781-d87d5b8722e1",
+            "sourceColumn": "Siste timeføring flag",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Siste timeføring <> ferie",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "General Date",
+            "lineageTag": "33a19a23-35b8-4d5b-9687-ec146f801455",
+            "sourceColumn": "Siste timeføring <> ferie",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Siste timeføring",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "General Date",
+            "lineageTag": "3552e573-39a6-4bbc-b489-f1180c6c08b9",
+            "sourceColumn": "Siste timeføring",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Siste timeføring ferie",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "General Date",
+            "lineageTag": "40573ccc-56ac-47e6-ace4-0c671ee0dcbd",
+            "sourceColumn": "Siste timeføring ferie",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Oppdatert timeføring",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "boolean",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "lineageTag": "795767be-f16f-4f3a-a240-fc5335c8555f",
+            "sourceColumn": "Oppdatert timeføring",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Ferie",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataType": "double",
+            "lineageTag": "379cc39a-0cee-4420-a7ff-611241d2b763",
+            "sourceColumn": "Ferie",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Feriedager",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "ce9fb296-5930-4b46-bbb3-b191a52377a8",
+            "sourceColumn": "Feriedager",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Diff",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataType": "double",
+            "lineageTag": "32278b4c-438f-4a94-a9ed-0b8d79cf1ce0",
+            "sourceColumn": "Diff",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Timer i prosent av budsjettert",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataType": "double",
+            "lineageTag": "65c5c0ce-4931-4091-98fd-6270c8511385",
+            "sourceColumn": "Timer i prosent av budsjettert",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Prosent framo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataType": "double",
+            "lineageTag": "08e63673-23c2-47cf-a759-8e82cc656375",
+            "sourceColumn": "Prosent framo",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Timer i prosent av budsjettert YTD",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataType": "double",
+            "lineageTag": "e29fe317-50d1-41a2-b43b-e417f4d96fa7",
+            "sourceColumn": "Timer i prosent av budsjettert YTD",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Timer i prosent av budsjettert forrige uke",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataType": "double",
+            "lineageTag": "d6610476-f626-4801-87c8-645ecb05a878",
+            "sourceColumn": "Timer i prosent av budsjettert forrige uke",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Antall_aktive_ansatte",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "01c427d9-fcf3-4345-98a5-000cd5999480",
+            "sourceColumn": "Antall_aktive_ansatte",
+            "summarizeBy": "sum"
+          }
+        ],
+        "lineageTag": "3efbc590-8386-4ab4-9941-9ddf92d6f1e7",
+        "partitions": [
+          {
+            "name": "Model",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = AnalysisServices.Databases(\"powerbi://api.powerbi.com/v1.0/myorg/POP\", [TypedMeasureColumns=true, Implementation=\"2.0\"]),",
+                "    #\"POPle dataset\" = Source{[Name=\"POPle dataset\"]}[Data],",
+                "    Model1 = #\"POPle dataset\"{[Id=\"Model\"]}[Data],",
+                "    Model2 = Model1{[Id=\"Model\"]}[Data],",
+                "    #\"Added Items\" = Cube.Transform(Model2,",
+                "        {",
+                "            {Cube.AddAndExpandDimensionColumn, \"[PO ansatt]\", {\"[PO ansatt].[Aktiv].[Aktiv]\", \"[PO ansatt].[Ansatt].[Ansatt]\", \"[PO ansatt].[Ansatt aktiv].[Ansatt aktiv]\", \"[PO ansatt].[Ansattnavn].[Ansattnavn]\", \"[PO ansatt].[Ansattnummer].[Ansattnummer]\", \"[PO ansatt].[Avdeling].[Avdeling]\", \"[PO ansatt].[Prosent Framo].[Prosent Framo]\"}, {\"PO ansatt.Aktiv\", \"PO ansatt.Ansatt\", \"PO ansatt.Ansatt aktiv\", \"PO ansatt.Ansattnavn\", \"PO ansatt.Ansattnummer\", \"PO ansatt.Avdeling\", \"PO ansatt.Prosent Framo\"}},",
+                "            {Cube.AddMeasureColumn, \"Timer uten fravær\", \"[Measures].[Timer uten fravær]\"},",
+                "            {Cube.AddMeasureColumn, \"Fakturerbare timer\", \"[Measures].[Fakturerbare timer]\"},",
+                "            {Cube.AddMeasureColumn, \"Faktureringsgrad\", \"[Measures].[Faktureringsgrad]\"},",
+                "            {Cube.AddMeasureColumn, \"Ikke fakturerbare timer\", \"[Measures].[Ikke fakturerbare timer]\"},",
+                "            {Cube.AddMeasureColumn, \"Timer ført\", \"[Measures].[Timer ført]\"},",
+                "            {Cube.AddMeasureColumn, \"Siste timeføring flag\", \"[Measures].[Siste timeføring flag]\"},",
+                "            {Cube.AddMeasureColumn, \"Siste timeføring <> ferie\", \"[Measures].[Siste timeføring <> ferie]\"},",
+                "            {Cube.AddMeasureColumn, \"Siste timeføring\", \"[Measures].[Siste timeføring]\"},",
+                "            {Cube.AddMeasureColumn, \"Siste timeføring ferie\", \"[Measures].[Siste timeføring ferie]\"},",
+                "            {Cube.AddMeasureColumn, \"Oppdatert timeføring\", \"[Measures].[Oppdatert timeføring]\"},",
+                "            {Cube.AddMeasureColumn, \"Ferie\", \"[Measures].[Ferie]\"},",
+                "            {Cube.AddMeasureColumn, \"Feriedager\", \"[Measures].[Feriedager]\"},",
+                "            {Cube.AddMeasureColumn, \"Diff\", \"[Measures].[Diff]\"},",
+                "            {Cube.AddMeasureColumn, \"Timer i prosent av budsjettert\", \"[Measures].[Timer i prosent av budsjettert]\"},",
+                "            {Cube.AddMeasureColumn, \"Prosent framo\", \"[Measures].[Prosent framo]\"},",
+                "            {Cube.AddMeasureColumn, \"Timer i prosent av budsjettert YTD\", \"[Measures].[Timer i prosent av budsjettert YTD]\"},",
+                "            {Cube.AddMeasureColumn, \"Timer i prosent av budsjettert forrige uke\", \"[Measures].[Timer i prosent av budsjettert forrige uke]\"},",
+                "            {Cube.AddMeasureColumn, \"Antall_aktive_ansatte\", \"[Measures].[Antall_aktive_ansatte]\"}",
+                "        })",
+                "in",
+                "    #\"Added Items\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

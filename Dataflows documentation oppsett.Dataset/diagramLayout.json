@@ -1,0 +1,100 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 811.53953655242867,
+            "y": 108.61127558818259
+          },
+          "nodeIndex": "Dataflows",
+          "nodeLineageTag": "07a15b78-74f4-4545-9dc8-8314035f175b",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1057.8761849833074,
+            "y": 96.189951231142459
+          },
+          "nodeIndex": "Dataflows data",
+          "nodeLineageTag": "3964b444-3158-40e3-b9b2-3e4ea002f131",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 542.20643101468659,
+            "y": 118.95610317438947
+          },
+          "nodeIndex": "Server / database overview",
+          "nodeLineageTag": "f7a3429e-3647-427a-95b7-cf2e78d7bde6",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 281.99999999999983,
+            "y": 108.61127558818259
+          },
+          "nodeIndex": "SQL Server",
+          "nodeLineageTag": "8e154adb-9d06-4639-bdac-3e6e8fccd1c9",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 11.9925974737057,
+            "y": 353.43886179507922
+          },
+          "nodeIndex": "Workspaces",
+          "nodeLineageTag": "7011d31b-97f5-44e8-9d17-e3ee7483dd5e",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1329.8835875096017,
+            "y": 62.687772359015867
+          },
+          "nodeIndex": "Model",
+          "nodeLineageTag": "3efbc590-8386-4ab4-9941-9ddf92d6f1e7",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 92,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

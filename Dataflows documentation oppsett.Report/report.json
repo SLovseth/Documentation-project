@@ -1,0 +1,68 @@
+{
+  "config": "{\"version\":\"5.51\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY24SU02\",\"version\":\"5.51\",\"type\":2},\"customTheme\":{\"name\":\"Tidal\",\"version\":\"5.51\",\"type\":2}},\"activeSectionIndex\":0,\"defaultDrillFilterOtherVisuals\":true,\"slowDataSourceSettings\":{\"isCrossHighlightingDisabled\":false,\"isSlicerSelectionsButtonEnabled\":false,\"isFilterSelectionsButtonEnabled\":false,\"isFieldWellButtonEnabled\":false,\"isApplyAllButtonEnabled\":false},\"linguisticSchemaSyncVersion\":2,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true,\"queryLimitOption\":6,\"exportDataMode\":1,\"useDefaultAggregateDisplayName\":true},\"objects\":{\"section\":[{\"properties\":{\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}}}}]}}",
+  "layoutOptimization": 0,
+  "resourcePackages": [
+    {
+      "resourcePackage": {
+        "disabled": false,
+        "items": [
+          {
+            "name": "CY24SU02",
+            "path": "BaseThemes/CY24SU02.json",
+            "type": 202
+          },
+          {
+            "name": "Tidal",
+            "path": "BuiltInThemes/Tidal.json",
+            "type": 201
+          }
+        ],
+        "name": "SharedResources",
+        "type": 2
+      }
+    }
+  ],
+  "sections": [
+    {
+      "config": "{}",
+      "displayName": "Page 1",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "ReportSection",
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"7f5504076c6fd0bc372f\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":0,\"z\":0,\"width\":1267.986348122867,\"height\":69.419795221843}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"Workspaces.WorkspaceName\",\"active\":true}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"w\",\"Entity\":\"Workspaces\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"w\"}},\"Property\":\"WorkspaceName\"},\"Name\":\"Workspaces.WorkspaceName\",\"NativeReferenceName\":\"WorkspaceName\"}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"data\":[{\"properties\":{\"mode\":{\"expr\":{\"Literal\":{\"Value\":\"'Basic'\"}}}}}],\"general\":[{\"properties\":{\"orientation\":{\"expr\":{\"Literal\":{\"Value\":\"1D\"}}},\"filter\":{\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"w\",\"Entity\":\"Workspaces\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"w\"}},\"Property\":\"WorkspaceName\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Demo workspace'\"}}]]}}}]}}}}],\"header\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 69.42,
+          "width": 1267.99,
+          "x": 0.00,
+          "y": 0.00,
+          "z": 0.00
+        },
+        {
+          "config": "{\"name\":\"8c78916b9d7c552b5721\",\"layouts\":[{\"id\":0,\"position\":{\"x\":12.286689419795222,\"y\":208.87372013651878,\"z\":1000,\"width\":1229.283276450512,\"height\":325.59726962457336}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"Dataflows data.DataflowName\"},{\"queryRef\":\"Dataflows data.QueryName\"},{\"queryRef\":\"Dataflows data.Function Flag\"},{\"queryRef\":\"Dataflows data.Used in merging Flag\"},{\"queryRef\":\"Dataflows data.Parameter Flag\"},{\"queryRef\":\"Dataflows data.Referenced by\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"Dataflows data\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"DataflowName\"},\"Name\":\"Dataflows data.DataflowName\",\"NativeReferenceName\":\"DataflowName\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"QueryName\"},\"Name\":\"Dataflows data.QueryName\",\"NativeReferenceName\":\"QueryName\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Function Flag\"},\"Name\":\"Dataflows data.Function Flag\",\"NativeReferenceName\":\"Function Flag\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Parameter Flag\"},\"Name\":\"Dataflows data.Parameter Flag\",\"NativeReferenceName\":\"Parameter Flag\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Referenced by\"},\"Name\":\"Dataflows data.Referenced by\",\"NativeReferenceName\":\"Referenced by\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Used in merging Flag\"},\"Name\":\"Dataflows data.Used in merging Flag\",\"NativeReferenceName\":\"Used in merging Flag\"}]},\"drillFilterOtherVisuals\":true}}",
+          "filters": "[]",
+          "height": 325.60,
+          "width": 1229.28,
+          "x": 12.29,
+          "y": 208.87,
+          "z": 1000.00
+        }
+      ],
+      "width": 1280.00
+    },
+    {
+      "config": "{}",
+      "displayName": "Page 2",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "ReportSectionc0eb9ac49ee0cca58f48",
+      "ordinal": 1,
+      "visualContainers": [],
+      "width": 1280.00
+    }
+  ],
+  "theme": "Tidal"
+}
